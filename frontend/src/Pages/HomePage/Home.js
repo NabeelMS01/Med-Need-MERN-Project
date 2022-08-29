@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
  import {Typography,AppBar, CssBaseline, Container} from "@material-ui/core"
 import NavBar from '../../Components/NavBar/NavBar'
 import axios from "axios";
+import HomeHeading from '../../Components/HomeHeading/HomeHeading';
  
 function Home() {
   useEffect(() => {
@@ -13,8 +14,8 @@ function Home() {
   }, []);
  
  async function getdata(){
-  const data = await axios.get('/home')
-  console.log(data);
+  // const data = await axios.get('/home')
+  
 }
 
 
@@ -22,13 +23,7 @@ function Home() {
      <>
      <CssBaseline/>
      <NavBar/>
- <Container>
-  
- 
-
-
-
- </Container>
+   <HomeHeading/>
 
      
      </>

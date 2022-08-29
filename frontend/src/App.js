@@ -1,6 +1,6 @@
  
 import './App.css';
-import React from 'react';
+import React, { useState } from 'react';
 import {BrowserRouter,Routes, Route} from "react-router-dom"
 import Home from './Pages/HomePage/Home';
  
@@ -10,32 +10,42 @@ import AdminDashboard from './Pages/AdminSide/AdminDashboard';
  import {theme} from './theme'
 import { ThemeProvider } from '@material-ui/core';
 import AdminUsers from './Pages/AdminSide/Professionals';
-import { DrawerContext } from './contexts/contexts';
+import { AlertContext, DrawerContext } from './contexts/contexts';
 import Clients from './Pages/AdminSide/Clients';
+import AdminLogin from './Pages/AdminSide/Login/AdminLogin';
+import ManageCategory from './Pages/AdminSide/ManageCategory';
 function App() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+   const [openAlert, setOpenAlert] =  useState(false);
+   const [addCatState,setaddCatState ] =useState(false)
   return (
 
 <DrawerContext.Provider value={{open,setOpen}}>
-  
+ <AlertContext.Provider value={{openAlert, setOpenAlert,addCatState,setaddCatState }} >
 <ThemeProvider theme={theme} >
 
   <BrowserRouter> 
  
 <Routes>
+  //===================user side==============
    <Route path='/' element={<Home/>} />
    <Route path='/create-account' element={<SignUp/>} />
   <Route path='/login' element={<Login/>} />
  
+//===================admin side==========================
+
+
+<Route path='/admin-manage-category' element={ <ManageCategory/>} />
   <Route path='/admin-dashboard' element={ <AdminDashboard/>} />
    <Route path='/admin-professionals' element={ <AdminUsers/>} />
    <Route path='/admin-clients' element={ < Clients/>} />
+   <Route path='/admin' element={ <AdminLogin/> } />
 </Routes>
 
 
  </BrowserRouter>
 </ThemeProvider>
-
+</AlertContext.Provider> 
 </DrawerContext.Provider>
  
   );

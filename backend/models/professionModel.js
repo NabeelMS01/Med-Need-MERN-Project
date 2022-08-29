@@ -1,5 +1,5 @@
 const mongoose =require('mongoose')
-const ObjectId=mongoose.Schema.Types.ObjectId,
+const ObjectId=mongoose.Schema.Types.ObjectId
 
 const  professionSchema=mongoose.Schema(
     {
@@ -11,6 +11,13 @@ const  professionSchema=mongoose.Schema(
         hiring_type:{
             type:String,
             default:null,
+        },
+        cloudinary_url:{
+            type:String, 
+        },
+        status:{
+            type:Boolean,
+            default:true
         }
     },{
         timestamps:true

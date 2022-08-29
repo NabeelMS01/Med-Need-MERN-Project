@@ -6,7 +6,7 @@ function AdminDashboard() {
     <div>
 
 <MiniDrawer>
- gyftuyfdtrd
+ Dashboard
 </MiniDrawer>
 
 

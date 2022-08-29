@@ -11,7 +11,7 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -81,9 +81,14 @@ function Login() {
             },
             config
           )
-          .then(({data}) => {
+          .then(async({data}) => {
             
 console.log(data);
+const userData=JSON.stringify(data)
+   
+ localStorage.setItem("userInfo",userData);
+  navigate('/')
+ 
 
 
 
@@ -100,6 +105,9 @@ console.log(data);
             } else if (err.response.data == "wrong email") {
               setprogressBar(false);
               seterrormessage("No account exist");
+            } else if (err.response.data == "account blocked") {
+              setprogressBar(false);
+              seterrormessage("your account is blocked");
             }
           });
       } catch (err) {
@@ -109,6 +117,16 @@ console.log(data);
       }
     }
   };
+  useEffect(() => {
+    const userInfo =localStorage.getItem("userInfo");
+    if(userInfo){
+      navigate('/')
+    }
+    return () => {
+      
+    };
+  }, [ ]);
+
 
   return (
     <div>

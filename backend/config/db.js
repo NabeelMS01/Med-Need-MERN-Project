@@ -6,7 +6,7 @@ const mongoose =require('mongoose')
 const connectDb= async()=>{
     try {
         let URI =process.env.MONGO_URI
-       
+        console.log(URI);
          
         mongoose.connect(URI ,(err)=>{
             if(err)throw err;
