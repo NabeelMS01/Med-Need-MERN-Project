@@ -3,7 +3,9 @@ const User = require("../models/userModel");
 
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-
+const Professions = require("../models/professionModel");
+const cloudinary = require("../utils/cloudinary");
+const Profile = require("../models/profileModel");
 const ObjectId = mongoose.Types.ObjectId;
 const verify = (req, res) => {
   const authHeader = req.headers.authorization;
@@ -32,7 +34,7 @@ const createAccount = asyncHandler(async (req, res, next) => {
       res.status(400);
       throw new Error("email exist");
     }
-    console.log(name);
+   
     const user = await User.create({
       name: name,
       email: email,
@@ -46,27 +48,27 @@ const createAccount = asyncHandler(async (req, res, next) => {
       location: null,
     })
       .then((data) => {
-        console.log(data);
+       
         if (data) {
           res.status(200).json(data);
         }
       })
       .catch((err) => {
-        console.log(err.keyPattern.phone == 1);
+        
         if (err.keyPattern.phone == 1) {
           res.status(400);
           throw new Error("number exist");
         }
       });
 
-    console.log("user");
+ 
     if (user) {
       res.status(200).json({
         _id: user._id,
       });
     }
   } catch (err) {
-    console.log(err.message);
+    
 
     if (res.statusCode == 400) {
       res.status(400).send(err.message);
@@ -87,29 +89,26 @@ const authUser = asyncHandler(async (req, res) => {
     }
 
     if (userExist && (await userExist.matchPassword(password))) {
-      console.log(userExist);
-      if(userExist.status){
-      const accessToken = jwt.sign(
-        { id: userExist._id, isUser: true },
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-          expiresIn: "2d",
-        }
-      );
-      res.status(200).json({
-        username: userExist.name,
-        email: userExist.email,
-        isUser: true,
-        accessToken,
-      });}else{
+      
+      if (userExist.status) {
+        const accessToken = jwt.sign(
+          { id: userExist._id, isUser: true },
+          process.env.ACCESS_TOKEN_SECRET,
+          {
+            expiresIn: "2d",
+          }
+        );
+        res.status(200).json({
+          username: userExist.name,
+          email: userExist.email,
+          isUser: true,
+          isProfessional: userExist.is_professional,
+          accessToken,
+        });
+      } else {
         res.status(400);
         throw new Error("account blocked");
-
       }
-
-
-
-
     } else {
       console.log("wrong password");
       res.status(400);
@@ -131,19 +130,30 @@ const getallusers = asyncHandler(async (req, res) => {
     const users = await User.find();
 
     if (users) {
-      console.log(users);
+     ;
       res.json(users);
     }
   } catch (error) {}
 });
+
+const getAllProfessions = asyncHandler(async (req, res) => {
+  try {
+    await Professions.find().then((data) => {
+      res.status(200).json(data);
+    });
+  } catch (error) {
+   
+  }
+});
+
 // -------------------------------------Block or unblock uers------------------------------
 const BlockUnblock = asyncHandler(async (req, res) => {
-  console.log(req.body);
+
   const { _id } = req.body;
   try {
     await User.findOne({ _id: ObjectId(_id) }).then((data) => {
       if (data) {
-        console.log(data);
+       
         if (data.status) {
           blockUser(_id);
         } else {
@@ -160,7 +170,7 @@ const BlockUnblock = asyncHandler(async (req, res) => {
             },
           }
         ).then((response) => {
-          console.log(response);
+         
           if (response) {
             res.status(200).json({ blockUnblock: true });
           }
@@ -175,7 +185,7 @@ const BlockUnblock = asyncHandler(async (req, res) => {
             },
           }
         ).then((response) => {
-          console.log(response);
+          
           if (response) {
             res.status(200).json({ blockUnblock: true });
           }
@@ -183,11 +193,115 @@ const BlockUnblock = asyncHandler(async (req, res) => {
       }
     });
   } catch (error) {
-  console.log(error);
-
-
+   
   }
 });
+
+const submitApplication = asyncHandler(async (req, res) => {
+  try {
+    let profileUrl;
+    let resumeUrl;
+    
+    const {
+      name,
+      email,
+      date_of_birth,
+      gender,
+      address,
+      country,
+      mobile,
+      profession,
+      about,
+      languages,
+      token
+    } = req.body;
+
+ const {id}=  jwt.decode(token)
+req.body.user_id=ObjectId(id)
+
+
+    const { profile_img, resume } = req.files;
+
+    if (!profile_img) {
+      res.status(400);
+      throw new Error("profile pending");
+    }
+    if (!resume) {
+      res.status(400);
+      throw new Error("resume pending");
+    }
+
+    if (profile_img && resume) {
+      profileUrl = await cloudinary.uploader.upload(profile_img[0].path);
+        resumeUrl = await cloudinary.uploader.upload(resume[0].path);
+    
+      req.body.profile_img = {
+        url: profileUrl.url,
+        public_id: profileUrl.public_id,
+      };
+      req.body.resume = {
+        url: resumeUrl.url,
+        public_id: resumeUrl.public_id,
+      };
+    
+       await Profile.create(req.body).then((response)=>{
+      
+      res.status(200).json(response)
+
+       })
+    }
+  } catch (error) {
+   
+    if (error) {
+      if (error.message) {
+        res.status(400).json(error.message);
+      }
+    }
+  }
+});
+
+
+const checkFormstatus=asyncHandler(async(req,res)=>{
+try {
+ 
+  const {username,email,isProfessional,accessToken}=req.body
+   const tokenData=jwt.decode(accessToken)
+ console.log(tokenData.id);
+
+ if(isProfessional){
+  
+await Profile.findOne({user_id:ObjectId(tokenData.id)}).then((response)=>{
+  console.log(response)
+if(!response){
+res.status(200).json({status:false})
+
+}else{
+  res.status(200).json({status:true})
+}
+
+
+})
+
+
+
+
+ }
+
+
+
+
+} catch (error) {
+  console.log(error);
+  if(error){
+    res.status(400)
+  }
+}
+
+
+})
+
+
+
 
 module.exports = {
   createAccount,
@@ -195,4 +309,7 @@ module.exports = {
   verify,
   getallusers,
   BlockUnblock,
+  getAllProfessions,
+  submitApplication,
+  checkFormstatus
 };

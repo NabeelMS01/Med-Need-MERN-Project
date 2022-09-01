@@ -5,7 +5,12 @@ import {
   Box,
   Button,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
   InputAdornment,
+  Radio,
+  RadioGroup,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -57,7 +62,7 @@ function SignUp() {
     if (phone.length <= 0) {
       seterrorPhone("Phone number cannot be empty");
       return false;
-    } else if (phone.length < 10||phone.length > 10) {
+    } else if (phone.length < 10 || phone.length > 10) {
       seterrorPhone("Enter a proper phone number");
       return false;
     } else {
@@ -108,45 +113,39 @@ function SignUp() {
         setprogressBar(true);
         console.log("created");
 
-         await axios.post(
-          "/create-account",
-          {
-            name,
-            email,
-            phone,
-            password,
-            is_professional:isProfessional? true:false,
-            is_employer:isProfessional==false?true:false,
-          },
-          config
-        ).then((res)=>{
-          console.log(res);
-        })
-      
-    
-      setprogressBar(false);
-     
-     navigate('/login')
-        
+        await axios
+          .post(
+            "/create-account",
+            {
+              name,
+              email,
+              phone,
+              password,
+              is_professional: isProfessional ? true : false,
+              is_employer: isProfessional == false ? true : false,
+            },
+            config
+          )
+          .then((res) => {
+            console.log(res);
+          });
 
- 
+        setprogressBar(false);
+
+        navigate("/login");
       }
     } catch (error) {
-      
-    
-      if(error){
-        
-          if(error.response.data=="email exist"){
-            seterrorEmail("user with this email already exist")
-          }else if( error.response.data=="number exist"){
-            seterrorPhone("user with this number already exist")
-          }
+      if (error) {
+        if (error.response.data == "email exist") {
+          seterrorEmail("user with this email already exist");
+        } else if (error.response.data == "number exist") {
+          seterrorPhone("user with this number already exist");
+        }
 
+        console.log(error.response.data);
 
-          console.log(error.response.data);
-        
-        setprogressBar(false);}
-
+        setprogressBar(false);
+      }
     }
   };
 
@@ -235,7 +234,7 @@ function SignUp() {
             margin={"auto"}
             padding={"5px "}
           >
-            <ToggleButton
+            {/* <ToggleButton
               value={""}
               onClick={() => {
                 setisProfessional(true);
@@ -267,7 +266,36 @@ function SignUp() {
               }}
             >
               Employer
-            </ToggleButton>
+            </ToggleButton> */}
+
+            <FormControl required  >
+              <RadioGroup   
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                defaultValue={"Professional"}
+               
+              >
+                <FormControlLabel  sx={{color: isProfessional? " #238279":null ,}}
+                  onClick={() => {
+                    setisProfessional(true);
+                  }}
+                  value="Professional"
+                  control={<Radio  color="success"   />}
+                  label="Professional"
+                 
+                  
+                />
+                <FormControlLabel  sx={{color: !isProfessional? " #238279":null , }}
+                  onClick={() => {
+                    setisProfessional(false);
+                  }}
+                  value="Employer"
+                  control={<Radio color="success" />}
+                  label="Employer"
+                />
+              </RadioGroup>
+            </FormControl>
           </Box>
           <span
             style={{ color: "red", marginRight: "auto", paddingLeft: "20px" }}

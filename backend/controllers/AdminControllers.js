@@ -10,7 +10,7 @@ const cloudinary = require("../utils/cloudinary");
 const ObjectId = mongoose.Types.ObjectId;
 
 const adminAuth = asyncHandler(async (req, res) => {
-  console.log(req.body);
+  
   try {
     const { email, password } = req.body;
     const user = await Admin.findOne({ email: email });
@@ -53,11 +53,11 @@ const adminAuth = asyncHandler(async (req, res) => {
 });
 
 const getUser = asyncHandler(async (req, res) => {
-  console.log(req.params.id);
+  
 
   const user = await User.findOne({ _id: ObjectId(req.params.id) });
   if (user) {
-    console.log(user);
+     
     res.status(200).json(user);
   } else {
     res.status(400);
@@ -81,7 +81,7 @@ const addProfession = asyncHandler(async (req, res) => {
       hiring_type,
       cloudinary_url: result.url,
     }).then(async(response)=>{
-      console.log(response);
+      
       if (response) {
         res.status(200).json({ status: true, response });
       }
@@ -89,7 +89,7 @@ const addProfession = asyncHandler(async (req, res) => {
 
     
   } catch (error) {
-    console.log(error);
+   
  if(error){
   res.status(400).json(error.response.message)
   
@@ -105,7 +105,7 @@ const getCategory =asyncHandler(async(req,res)=>{
 try {
  
 await Professions.find().then((response)=>{
-   console.log(response);
+ 
    if(response){
     res.status(200).json(response)
    }else{

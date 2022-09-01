@@ -7,13 +7,26 @@ const profileSchema=mongoose.Schema(
     { 
         user_id:{
             type:ObjectId,
+            ref:"User",
+            unique:true
+        },
+        profile_img:{
+          type:Object,
+          default:null
+        },
+        name:{
+            type:String,
+             
+        },
+        email:{
+            type:String,
             ref:"User"
         },
         profile_image:{
             type:String
         },
-        age:{
-            type:Number,
+        date_of_birth:{
+            type:Date,
             default:null
         },
         gender:{
@@ -39,6 +52,14 @@ const profileSchema=mongoose.Schema(
             type:String,
             default:null
         },
+        about:{
+            type:String,
+            default:null
+        },
+        mobile:{
+            type:Number,
+            default:null
+        },
         state:{
             type:String,
             default:null
@@ -54,7 +75,7 @@ const profileSchema=mongoose.Schema(
 
          },
          resume:{
-            type:String,
+            type:Object,
             default:null,
          },
          experience:{
@@ -67,8 +88,8 @@ const profileSchema=mongoose.Schema(
             default:false,
          },
          approval_status:{
-            type:Boolean,
-            default:false,
+             type:String,
+            default:"pending",
          },
          reviews:{
             type:Array,
@@ -90,10 +111,14 @@ const profileSchema=mongoose.Schema(
          },
          languages:{
             type:Array,
-            default:[]
+            default:null
             
          }
 
         
     }
 )
+
+const Profile = mongoose.model('Profile',profileSchema);
+
+module.exports =Profile

@@ -1,6 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 function HomeHeading() {
+ const navigate =useNavigate()
+  const [user,setUser]=useState({})
+  
+  useEffect(() => {
+  const data=localStorage.getItem('userInfo')
+
+ setUser(JSON.parse(data))
+     
+  }, [ ]);
+
+
+const handleWorkWithUs=()=>{
+
+if(!user){
+  localStorage.removeItem('userInfo')
+  navigate('/create-account')
+}else{
+  navigate('/create-account')
+}
+ 
+
+}
+
+
+
   return (
     <div class="relative overflow-hidden bg-white">
   <div class="mx-auto max-w-7xl">
@@ -24,8 +50,8 @@ professionals.  </p>
               <a style={  {  backgroundColor:"#257069",cursor:"pointer", }}  class="flex w-full items-center justify-center rounded-md border border-transparent   px-8 py-3 text-base font-medium text-white  md:py-4 md:px-10 md:text-lg  ">Hire a professional</a>
             </div>
             <div class="mt-3 sm:mt-0 sm:ml-3">
-              <a style={{ cursor:"pointer", color:"#257069"}}   class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-
-100 px-8 py-3 text-base font-medium   hover:bg-indigo-200 md:py-4 md:px-10 md:text-lg">Work with Us</a>            </div>
+             { !user? <a onClick={()=>{handleWorkWithUs()}} style={{ cursor:"pointer", color:"#257069"}}   class="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-
+100 px-8 py-3 text-base font-medium   hover:bg-indigo-200 md:py-4 md:px-10 md:text-lg">Work with Us</a> :null   }         </div>
           </div>
         </div>
       </main>

@@ -23,7 +23,7 @@ const [categories,setCategories]= useState([])
   const handleDelete = (id) => {};
 useEffect( () => {
      axios.get('/admin/get-all-professions').then(({data})=>{
- console.log(data);
+ 
 
  setCategories(data)
 

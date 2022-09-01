@@ -63,6 +63,7 @@ function AddCategory() {
         };
  let file = fileData
     const     formdata=new FormData()
+    
         formdata.append('image',file)
 formdata.append('name',name)
   formdata.append('hiring_type',hiringType)      

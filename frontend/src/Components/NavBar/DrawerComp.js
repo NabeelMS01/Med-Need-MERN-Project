@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import DragHandleRoundedIcon from "@mui/icons-material/DragHandleRounded";
-import { Person, Search } from "@mui/icons-material";
+import { Dashboard, Person, Search } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 function DrawerComp() {
@@ -42,7 +42,7 @@ function DrawerComp() {
 
     return () => {};
   }, [   ]);
-  console.log(userData);
+   
   const logout = () => {
     swal({
       title: "Are you sure?",
@@ -123,6 +123,18 @@ function DrawerComp() {
               </ListItemIcon>
             </ListItemButton>
 
+        { userData?<> <ListItemButton
+              onClick={() => {
+          navigate('/dashboard')
+              }}
+            > 
+              <Dashboard />
+
+              <ListItemIcon style={{ marginLeft: "15px" }}>
+                <ListItemText>Dashboard</ListItemText>
+              </ListItemIcon>
+            </ListItemButton></>:null  
+}
 
           {drawerNav.map((data, index) =>
             data.status ? (

@@ -162,7 +162,8 @@ function NavBar() {
                 ) : (
                   <>
                     <Button
-                      style={{ marginLeft: "25px", fontWeight: "bold" }}
+                    onClick={()=>{navigate('/dashboard')}}
+                      style={{ marginLeft: "25px", fontWeight: "bold", marginRight: "25px", }}
                       variant="text"
                     >
                       Dashboard
@@ -219,7 +220,7 @@ function NavBar() {
                   transformOrigin={{ horizontal: "right", vertical: "top" }}
                   anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                 >
-                  <MenuItem>
+                  <MenuItem onClick={()=>{navigate('/profile')}} >
                     <Avatar />{ userData?  userData.username : "Profile"}
                   </MenuItem>
                   
