@@ -25,7 +25,7 @@ import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import { DrawerContext } from "../../contexts/contexts";
-import { Favorite, Logout, MenuRounded, Message, RequestPage, RequestQuote, Settings } from "@mui/icons-material";
+import { Favorite, Logout, MenuRounded, Message, PersonSearch, RequestPage, RequestQuote, Settings } from "@mui/icons-material";
 import CategoryIcon from "@mui/icons-material/Category";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import {
@@ -40,6 +40,7 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
+import axios from "axios";
 
 const drawerWidth = 240;
 
@@ -115,7 +116,8 @@ export default function UserDrawer({ children }) {
   const [userData, setuserData] =  useState({});
   const [anchorEl, setAnchorEl] =  useState(null);
   const [deleAlert, setdeleAlert] = useState(true);
-
+  const [userProfile, setUserProfile] = useState({});
+  let ProfileData;
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -141,6 +143,12 @@ export default function UserDrawer({ children }) {
       route: "/testimonials",
       icon: <PendingActionsIcon />,
       status:userData.isProfessional
+    },
+    {
+      title: "Quotes Send",
+      route: "/quotes-send",
+      icon: <PendingActionsIcon />,
+      status:!userData.isProfessional
     },
     
     
@@ -192,13 +200,34 @@ export default function UserDrawer({ children }) {
   React.useEffect(() => {
     const userdata = localStorage.getItem("userInfo");
     const userjson = JSON.parse(userdata);
-
+    getProfileData();
     getUser(userjson);
+
+
+
  ;
     return () => {};
   }, [deleAlert]);
  
+  async function getProfileData() {
+    try {
+      const token = JSON.parse(localStorage.getItem("userInfo"));
 
+    await axios.get(`/profile/${token.accessToken}`).then(async ({ data }) => {
+      ProfileData = await data;
+
+    
+      setUserProfile(data.profile.profile_img);
+      
+    });
+    } catch (error) {
+       
+    }
+   
+  }
+
+
+  console.log(userProfile.url)
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -219,6 +248,7 @@ export default function UserDrawer({ children }) {
           <Typography variant="h6" noWrap component="div">
             Med need 
           </Typography>
+       
 
           {
             <Tooltip title="Profile" sx={{ margin: "auto" }}>
@@ -232,7 +262,7 @@ export default function UserDrawer({ children }) {
               >
                 <Avatar sx={{ width: 32, height: 32 }}>
                   
-                  <Avatar src="https://static.remove.bg/remove-bg-web/3d75df900686714aa0c3f2ac38a019cdc089943e/assets/start_remove-c851bdf8d3127a24e2d137a55b1b427378cd17385b01aec6e59d5d4b5f39d2ec.png" /> 
+                  <Avatar src={userProfile.url||"" } /> 
                 </Avatar>
               </IconButton>
             </Tooltip>
@@ -274,7 +304,7 @@ export default function UserDrawer({ children }) {
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
             <MenuItem  onClick={()=>{navigate('/profile')}} >
-              <Avatar  src="https://static.remove.bg/remove-bg-web/3d75df900686714aa0c3f2ac38a019cdc089943e/assets/start_remove-c851bdf8d3127a24e2d137a55b1b427378cd17385b01aec6e59d5d4b5f39d2ec.png"  />
+              <Avatar src={userProfile.url||"" }  />
               {userData ? userData.username : "Profile"}
             </MenuItem>
 
@@ -285,6 +315,11 @@ export default function UserDrawer({ children }) {
                 <Settings fontSize="small" />
               </ListItemIcon>
               Settings
+            </MenuItem> <MenuItem onClick={()=>{navigate('/browse-professionals')}} >
+              <ListItemIcon>
+                <PersonSearch fontSize="small" />
+              </ListItemIcon>
+               Browse  <br/> Professionals 
             </MenuItem>
             <MenuItem onClick={ handleAlert   }>
               <ListItemIcon>

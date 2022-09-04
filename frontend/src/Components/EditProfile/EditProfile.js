@@ -26,9 +26,9 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import UserDrawer from "../UserDashboard/UserDrawer";
-import swal from 'sweetalert';
+import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
-function EditProfile({title}) {
+function EditProfile({ title }) {
   const [fileData, setFileData] = useState([]);
   const [profileData, setProfileData] = useState();
   const [img, setImg] = useState();
@@ -54,7 +54,7 @@ function EditProfile({title}) {
   const [open, setOpen] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const handleClick = () => {
     setOpen(true);
   };
@@ -73,13 +73,13 @@ function EditProfile({title}) {
     setProfileData(e.target.files[0]);
     setImg(URL.createObjectURL(e.target.files[0]));
   };
- 
+
   const handleProfession = (event) => {
     setProfession(event.target.value);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
       if (
         date &&
@@ -91,13 +91,10 @@ function EditProfile({title}) {
         profession &&
         gender &&
         about &&
-        language &&
+       
         state &&
         name
       ) {
-         
-
-        
         const config = {
           headers: {
             "Content-type": "application/json",
@@ -120,26 +117,19 @@ function EditProfile({title}) {
         formData.append("status", true);
         formData.append("token", user.accessToken);
 
-        await axios
-          .post("/edit-profile", formData, config)
-          .then((response) => {
-           if(response){
-            setLoading(false)
-            swal("Success!", "...your application submitted successfully").then((res)=>{
-                   
-navigate('/dashboard')
-            }) 
-
-
-
-           }
-
-
-          });
+        await axios.post("/edit-profile", formData, config).then((response) => {
+          if (response) {
+            setLoading(false);
+            swal("Success!", "...your application submitted successfully").then(
+              (res) => {
+                setLoading(false)
+                navigate("/dashboard");
+              }
+            );
+          }
+        });
       }
     } catch (error) {
-     
-
       if (error.response.data == "profile pending") {
         handleClick();
         setErrMsg("please upload a profile picture");
@@ -172,16 +162,14 @@ navigate('/dashboard')
   const handleAddLang = () => {
     if (language) {
       setLanguages([...languages, language]);
+      setLanguage("");
     }
-    
   };
 
   return (
     <UserDrawer>
       <div className="max-w-2xl bg-white py-10 px-5 m-auto w-full mt-10">
-        <div className="text-3xl mb-6 text-center ">
-         {title}
-        </div>
+        <div className="text-3xl mb-6 text-center ">{title}</div>
 
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
@@ -303,7 +291,10 @@ navigate('/dashboard')
                 style={{ width: "100%" }}
                 variant="outlined"
                 label="Languages"
-                onChange={(e) => setLanguage(e.target.value)}
+                value={language}
+                onChange={(e) => {
+                  setLanguage(e.target.value);
+                }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">

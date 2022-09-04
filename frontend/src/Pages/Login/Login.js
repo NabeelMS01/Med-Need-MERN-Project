@@ -88,7 +88,7 @@ console.log(data);
 const userData=JSON.stringify(data)
    
  localStorage.setItem("userInfo",userData);
-  navigate('/')
+  navigate('/dashboard')
  
 
 

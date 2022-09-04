@@ -15,14 +15,19 @@ import Clients from './Pages/AdminSide/Clients';
 import AdminLogin from './Pages/AdminSide/Login/AdminLogin';
 import ManageCategory from './Pages/AdminSide/ManageCategory';
 import Dashboard from './Pages/Dashboard/Dashboard';
-import Profile from './Pages/Dashboard/Profile';
+ 
+ 
  
 import ProfileEdit from './Pages/Dashboard/ProfileEdit';
+import ProfilePage from './Pages/Dashboard/ProfilePage';
+import PendingRequests from './Pages/AdminSide/PendingRequests';
+import Browse from './Pages/BrowseProfessionals/Browse';
+ 
 function App() {
   const [open, setOpen] = useState(false);
    const [openAlert, setOpenAlert] =  useState(false);
    const [addCatState,setaddCatState ] =useState(false)
-   const [formAlert,setformAlert]=useState(true)
+   const [formAlert,setformAlert]=useState(false)
   return (
 
 <DrawerContext.Provider value={{open,setOpen}}>
@@ -37,9 +42,9 @@ function App() {
    <Route path='/create-account' element={<SignUp/>} />
   <Route path='/login' element={<Login/>} />
   <Route path='/dashboard' element={ <Dashboard/>} />
-  <Route path='/profile' element={ <Profile/>} />
+   <Route path='/profile' element={ <ProfilePage/>} />
   <Route path='/update-profile' element={ <ProfileEdit/>} />
-
+<Route path='/browse-professionals' element={ <Browse/>} />
   
 //===================admin side==========================
 
@@ -47,8 +52,11 @@ function App() {
 <Route path='/admin-manage-category' element={ <ManageCategory/>} />
   <Route path='/admin-dashboard' element={ <AdminDashboard/>} />
    <Route path='/admin-professionals' element={ <AdminUsers/>} />
+   <Route path='/admin-pending-requests' element={ <PendingRequests/>} />
+   
    <Route path='/admin-clients' element={ < Clients/>} />
    <Route path='/admin' element={ <AdminLogin/> } />
+   
 </Routes>
 
 

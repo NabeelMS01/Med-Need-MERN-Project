@@ -34,7 +34,7 @@ const createAccount = asyncHandler(async (req, res, next) => {
       res.status(400);
       throw new Error("email exist");
     }
-   
+
     const user = await User.create({
       name: name,
       email: email,
@@ -48,28 +48,23 @@ const createAccount = asyncHandler(async (req, res, next) => {
       location: null,
     })
       .then((data) => {
-       
         if (data) {
           res.status(200).json(data);
         }
       })
       .catch((err) => {
-        
         if (err.keyPattern.phone == 1) {
           res.status(400);
           throw new Error("number exist");
         }
       });
 
- 
     if (user) {
       res.status(200).json({
         _id: user._id,
       });
     }
   } catch (err) {
-    
-
     if (res.statusCode == 400) {
       res.status(400).send(err.message);
     } else if (res.statusCode == 404 || res.statusCode == 500) {
@@ -89,7 +84,6 @@ const authUser = asyncHandler(async (req, res) => {
     }
 
     if (userExist && (await userExist.matchPassword(password))) {
-      
       if (userExist.status) {
         const accessToken = jwt.sign(
           { id: userExist._id, isUser: true },
@@ -110,12 +104,10 @@ const authUser = asyncHandler(async (req, res) => {
         throw new Error("account blocked");
       }
     } else {
-      console.log("wrong password");
       res.status(400);
       throw new Error("wrong password");
     }
   } catch (error) {
-    console.log(error.message);
     if (res.statusCode == 400) {
       res.status(400).send(error.message);
     } else if (res.statusCode == 404 || res.statusCode == 500) {
@@ -126,11 +118,9 @@ const authUser = asyncHandler(async (req, res) => {
 // ----------------------Get user data--------------------------------
 const getallusers = asyncHandler(async (req, res) => {
   try {
-    console.log("get data");
     const users = await User.find();
 
     if (users) {
-     ;
       res.json(users);
     }
   } catch (error) {}
@@ -141,19 +131,15 @@ const getAllProfessions = asyncHandler(async (req, res) => {
     await Professions.find().then((data) => {
       res.status(200).json(data);
     });
-  } catch (error) {
-   
-  }
+  } catch (error) {}
 });
 
 // -------------------------------------Block or unblock uers------------------------------
 const BlockUnblock = asyncHandler(async (req, res) => {
-
   const { _id } = req.body;
   try {
     await User.findOne({ _id: ObjectId(_id) }).then((data) => {
       if (data) {
-       
         if (data.status) {
           blockUser(_id);
         } else {
@@ -170,7 +156,6 @@ const BlockUnblock = asyncHandler(async (req, res) => {
             },
           }
         ).then((response) => {
-         
           if (response) {
             res.status(200).json({ blockUnblock: true });
           }
@@ -185,23 +170,20 @@ const BlockUnblock = asyncHandler(async (req, res) => {
             },
           }
         ).then((response) => {
-          
           if (response) {
             res.status(200).json({ blockUnblock: true });
           }
         });
       }
     });
-  } catch (error) {
-   
-  }
+  } catch (error) {}
 });
 
 const submitApplication = asyncHandler(async (req, res) => {
   try {
     let profileUrl;
     let resumeUrl;
-    
+
     const {
       name,
       email,
@@ -213,12 +195,11 @@ const submitApplication = asyncHandler(async (req, res) => {
       profession,
       about,
       languages,
-      token
+      token,
     } = req.body;
 
- const {id}=  jwt.decode(token)
-req.body.user_id=ObjectId(id)
-
+    const { id } = jwt.decode(token);
+    req.body.user_id = ObjectId(id);
 
     const { profile_img, resume } = req.files;
 
@@ -233,8 +214,8 @@ req.body.user_id=ObjectId(id)
 
     if (profile_img && resume) {
       profileUrl = await cloudinary.uploader.upload(profile_img[0].path);
-        resumeUrl = await cloudinary.uploader.upload(resume[0].path);
-    
+      resumeUrl = await cloudinary.uploader.upload(resume[0].path);
+
       req.body.profile_img = {
         url: profileUrl.url,
         public_id: profileUrl.public_id,
@@ -243,15 +224,12 @@ req.body.user_id=ObjectId(id)
         url: resumeUrl.url,
         public_id: resumeUrl.public_id,
       };
-    
-       await Profile.create(req.body).then((response)=>{
-      
-      res.status(200).json(response)
 
-       })
+      await Profile.create(req.body).then((response) => {
+        res.status(200).json(response);
+      });
     }
   } catch (error) {
-   
     if (error) {
       if (error.message) {
         res.status(400).json(error.message);
@@ -260,48 +238,70 @@ req.body.user_id=ObjectId(id)
   }
 });
 
+const checkFormstatus = asyncHandler(async (req, res) => {
+  try {
+    const { username, email, isProfessional, accessToken } = req.body;
+    const tokenData = jwt.decode(accessToken);
 
-const checkFormstatus=asyncHandler(async(req,res)=>{
-try {
- 
-  const {username,email,isProfessional,accessToken}=req.body
-   const tokenData=jwt.decode(accessToken)
- console.log(tokenData.id);
-
- if(isProfessional){
-  
-await Profile.findOne({user_id:ObjectId(tokenData.id)}).then((response)=>{
-  console.log(response)
-if(!response){
-res.status(200).json({status:false})
-
-}else{
-  res.status(200).json({status:true})
-}
-
-
-})
-
-
-
-
- }
-
-
-
-
-} catch (error) {
-  console.log(error);
-  if(error){
-    res.status(400)
+    if (isProfessional) {
+      await Profile.findOne({ user_id: ObjectId(tokenData.id) }).then(
+        (response) => {
+          if (!response) {
+            res.status(200).json({ status: false });
+          } else {
+            res.status(200).json({ status: true });
+          }
+        }
+      );
+    }
+  } catch (error) {
+    if (error) {
+      res.status(400);
+    }
   }
-}
+});
 
+const ProfileData = asyncHandler(async (req, res) => {
+  try {
+    console.log("response");
+    const token = req.params.id;
+    const { id } = jwt.decode(token);
 
-})
+   
+    await User.aggregate([
+      {
+        $match: {
+          _id: ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "_id",
+          foreignField: "user_id",
+          as: "profile",
+        },
+      },
+      {
+        $unwind: {
+          path: "$profile",
+          includeArrayIndex: "string",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ])
+      .allowDiskUse(true)
+      .then((response) => {
+        console.log(response[0]);
 
-
-
+        if (response) {
+          res.status(200).json(response[0]);
+        }
+      });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 module.exports = {
   createAccount,
@@ -311,5 +311,6 @@ module.exports = {
   BlockUnblock,
   getAllProfessions,
   submitApplication,
-  checkFormstatus
+  checkFormstatus,
+  ProfileData,
 };
