@@ -14,7 +14,6 @@ const adminAuth = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await Admin.findOne({ email: email });
-    console.log(user);
 
     if (!user) {
       res.status(404).json("wrong email");
@@ -121,15 +120,15 @@ const userProfiles = asyncHandler(async (req, res) => {
           foreignField: "_id",
           as: "userdata",
         },
-      },{
-        $unwind:{
+      },
+      {
+        $unwind: {
           path: "$userdata",
-          includeArrayIndex: 'string',
-          preserveNullAndEmptyArrays: false
-        }
-      }
+          includeArrayIndex: "string",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
     ]).then((data) => {
-      console.log(data);
       if (data) {
         res.status(200).json(data);
       } else {
@@ -141,10 +140,55 @@ const userProfiles = asyncHandler(async (req, res) => {
   }
 });
 
+const acceptProfile = asyncHandler(async (req, res) => {
+  try {
+    const userProfile = await Profile.findOne({ _id: ObjectId(req.params.id) });
+   
+    console.log(userProfile.user_id);
+    console.log(req.params.status);
+
+    if (req.params.status == "verified") {
+     await   User.updateOne(
+        { _id: ObjectId(userProfile.user_id) },
+        {
+          $set: {
+            approval_status: true,
+          },
+        }
+      ).then((response)=>{
+        if(response){  res.status(200).json(response) }
+        
+        console.log(response);} );
+    } else if (req.params.status == "declined") {
+      User.updateOne(
+        { _id: userProfile.user_id },
+        {
+          $set: {
+            approval_status: false,
+          },
+        }
+      ).then((response)=>{console.log(response);
+        if(response){  res.status(200).json(response) }
+    
+       
+      });
+    }
+
+    await Profile.updateOne(
+      { _id: ObjectId(req.params.id) },
+      {
+        $set: { approval_status: req.params.status },
+      }
+    );
+  } catch (error) {
+    console.log(error) 
+  }
+});
 module.exports = {
   adminAuth,
   getUser,
   addProfession,
   getCategory,
   userProfiles,
+  acceptProfile,
 };

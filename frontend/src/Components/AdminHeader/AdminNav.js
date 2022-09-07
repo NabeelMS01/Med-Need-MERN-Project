@@ -25,7 +25,7 @@ import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 import { DrawerContext } from "../../contexts/contexts";
-import { Logout, MenuRounded, Message, Settings } from "@mui/icons-material";
+import { Home, Logout, MenuRounded, Message, Settings } from "@mui/icons-material";
 import CategoryIcon from "@mui/icons-material/Category";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import {
@@ -293,6 +293,12 @@ console.log(deleAlert);
                 <Settings fontSize="small" />
               </ListItemIcon>
               Settings
+            </MenuItem>
+            <MenuItem onClick={ ()=>{navigate('/')}   }>
+              <ListItemIcon>
+                <Home fontSize="small" />
+              </ListItemIcon>
+             Go Home
             </MenuItem>
             <MenuItem onClick={ handleAlert   }>
               <ListItemIcon>

@@ -129,6 +129,7 @@ function NavBar() {
                 <Button
                   style={{ marginLeft: "25px", fontWeight: "bold" }}
                   variant="text"
+                  onClick={()=>{navigate("/browse-professionals")}}
                 >
                   Browse Professionals
                 </Button>

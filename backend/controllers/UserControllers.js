@@ -267,7 +267,6 @@ const ProfileData = asyncHandler(async (req, res) => {
     const token = req.params.id;
     const { id } = jwt.decode(token);
 
-   
     await User.aggregate([
       {
         $match: {
@@ -303,6 +302,62 @@ const ProfileData = asyncHandler(async (req, res) => {
   }
 });
 
+const updateResume = asyncHandler(async (req, res) => {
+  try {
+    const { public_id, profile_id } = req.body;
+
+    console.log(public_id);
+    console.log(profile_id);
+
+    console.log(req.files.resume[0]);
+
+    const deleteFile = await cloudinary.v2.uploader.destroy(req.body.public_id);
+    let resumeUrl;
+    if (deleteFile) {
+      resumeUrl = await cloudinary.uploader.upload(req.files.resume[0].path);
+    }
+    console.log(resumeUrl);
+    if (resumeUrl && deleteFile) {
+      await Profile.updateOne(
+        { _id: ObjectId(profile_id) },
+        {
+          $set: {
+            resume: { url: resumeUrl.url, public_id: resumeUrl.public_id },
+          },
+        }
+      ).then((response) => {
+        console.log(response); 
+
+   if(response){
+    res.status(200).json(response)
+   }
+
+
+      });
+    }
+  } catch (error) {
+    res.status(400).json(error)
+  }
+});
+
+
+const UpdateProfile =asyncHandler(async(req,res)=>{
+
+  console.log("req.body");
+  
+
+try {
+ console.log(req.body);
+
+
+} catch (error) {
+  console.log(error);
+}
+
+
+
+})
+
 module.exports = {
   createAccount,
   authUser,
@@ -313,4 +368,6 @@ module.exports = {
   submitApplication,
   checkFormstatus,
   ProfileData,
+  updateResume,
+  UpdateProfile
 };

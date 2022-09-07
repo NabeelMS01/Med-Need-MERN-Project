@@ -18,6 +18,10 @@ const profileSchema=mongoose.Schema(
             type:String,
              
         },
+        pincode:{
+            type:Number,
+             
+        },
         email:{
             type:String,
             ref:"User"

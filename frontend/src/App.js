@@ -28,10 +28,14 @@ function App() {
    const [openAlert, setOpenAlert] =  useState(false);
    const [addCatState,setaddCatState ] =useState(false)
    const [formAlert,setformAlert]=useState(false)
+   const [view,setview]=useState(false)
+   const [openModal, setOpenModal] = useState(false);
+   const [editModal, setEditModal ] = useState(false);
+   
   return (
 
 <DrawerContext.Provider value={{open,setOpen}}>
- <AlertContext.Provider value={{openAlert, setOpenAlert,addCatState,setaddCatState,formAlert,setformAlert }} >
+ <AlertContext.Provider value={{ editModal, setEditModal , openModal, setOpenModal,openAlert, setOpenAlert,addCatState,setaddCatState,formAlert,setformAlert,view,setview }} >
 <ThemeProvider theme={theme} >
 
   <BrowserRouter> 

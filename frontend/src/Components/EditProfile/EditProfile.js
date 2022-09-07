@@ -92,8 +92,8 @@ function EditProfile({ title }) {
         gender &&
         about &&
        
-        state &&
-        name
+        state 
+        
       ) {
         const config = {
           headers: {
@@ -113,8 +113,9 @@ function EditProfile({ title }) {
         formData.append("mobile", parseInt(mobile));
         formData.append("profession", profession);
         formData.append("about", about);
-        formData.append("languages", JSON.stringify(languages));
+        formData.append("languages",  languages);
         formData.append("status", true);
+        formData.append("pincode", parseInt(pincode));
         formData.append("token", user.accessToken);
 
         await axios.post("/edit-profile", formData, config).then((response) => {
@@ -138,6 +139,7 @@ function EditProfile({ title }) {
         setErrMsg("please upload your resume");
       } else {
         handleClick();
+        console.log(error.response.data.message);
         setErrMsg(error.response.data);
       }
     }
@@ -160,6 +162,7 @@ function EditProfile({ title }) {
   }
 
   const handleAddLang = () => {
+    console.log(languages);
     if (language) {
       setLanguages([...languages, language]);
       setLanguage("");

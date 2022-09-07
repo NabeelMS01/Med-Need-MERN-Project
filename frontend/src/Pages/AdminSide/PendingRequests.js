@@ -1,16 +1,22 @@
  
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import MiniDrawer from '../../Components/AdminHeader/AdminNav'
  
 import { Button, Menu, MenuItem, Typography } from "@mui/material";
 import MoreVertRoundedIcon from "@mui/icons-material/MoreVertRounded";
 import axios from "axios";
+import ViewProfile from '../../Components/ViewProfile/ViewProfile';
+import { AlertContext } from '../../contexts/contexts';
 
 function PendingRequests() {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [profiledata,setprofiledata]=useState([])
+    const {view,setview}=useContext(AlertContext)
     const open = Boolean(anchorEl); 
+
+ const [viewProfile,setviewProfile]=useState([])
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
       };
@@ -25,7 +31,7 @@ function PendingRequests() {
         getProfessionalsRequests();
     
         return () => {};
-      }, [anchorEl]);
+      }, [view]);
     
     function getProfessionalsRequests(){
 try {
@@ -51,9 +57,9 @@ try {
   return (
     <MiniDrawer>
 
-  <Typography variant='h6' >Pending Requests</Typography>
+{ !view ?  <> <Typography variant='h6' >Pending Requests</Typography>
 
-{
+
  <div className="p-1.5 w-full inline-block align-middle">
                   <div className="overflow-hidden border rounded-lg">
                     <table className="table    text-gray-400 border-separate space-y-6 text-sm w-full">
@@ -104,7 +110,7 @@ try {
                           
                           
                      {    profiledata ? profiledata.map((data,index)=>(
-   data.approval_status=="pending" &&  <>  <tr  >
+   data.approval_status &&  <>  <tr  >
  <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
      {index+1}
  </td>
@@ -153,7 +159,9 @@ try {
      >
        <MenuItem
          onClick={() => {
-           // handleView(user._id);
+          setAnchorEl(false)
+           setviewProfile(data)
+           setview(true)
          }}
        >
          View Profile
@@ -208,9 +216,9 @@ try {
 
                     {/* {editUser ? <EditUser data={userData} /> : null} */}
                   </div>
-                </div>}
+                </div>  
 
-
+                </>:<ViewProfile data={profiledata[0]} />  }
     </MiniDrawer>
   )
 }

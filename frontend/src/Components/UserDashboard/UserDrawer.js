@@ -207,7 +207,7 @@ export default function UserDrawer({ children }) {
 
  ;
     return () => {};
-  }, [deleAlert]);
+  }, []);
  
   async function getProfileData() {
     try {
@@ -227,7 +227,7 @@ export default function UserDrawer({ children }) {
   }
 
 
-  console.log(userProfile.url)
+ 
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -245,7 +245,7 @@ export default function UserDrawer({ children }) {
           >
             <MenuRounded />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography onClick={()=>{navigate('/')}} style={{cursor:"pointer"}} variant="h6" noWrap component="div">
             Med need 
           </Typography>
        
@@ -343,7 +343,7 @@ export default function UserDrawer({ children }) {
         <Divider />
         <List>
           {menu.map((data, index) => (
-            data.status ? <>  <ListItem key={index} disablePadding sx={{ display: "block" }}>
+            data.status ? <>  <ListItem key={index} disablePadding sx={{ display: "block" }} >
              <Tooltip title={data.title} placement={"right-end"} >
              <ListItemButton
                 onClick={() => {

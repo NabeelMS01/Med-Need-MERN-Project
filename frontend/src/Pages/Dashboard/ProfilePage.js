@@ -5,7 +5,7 @@ import ProfessionalProfile from '../../Components/Profiles/ProProfile';
 function ProfilePage() {
 
  let userInfo=JSON.parse(localStorage.getItem('userInfo'))
-console.log(userInfo);
+ 
   return (
     <div>
 {
