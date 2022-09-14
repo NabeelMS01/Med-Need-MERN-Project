@@ -24,10 +24,11 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import UserDrawer from "../UserDashboard/UserDrawer";
 import swal from "sweetalert";
 import { useNavigate } from "react-router-dom";
+import { AlertContext } from "../../contexts/contexts";
 function EditProfile({ title }) {
   const [fileData, setFileData] = useState([]);
   const [profileData, setProfileData] = useState();
@@ -52,7 +53,7 @@ function EditProfile({ title }) {
   const [state, setState] = useState("");
   const [user, setUser] = useState({});
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
+  const {errMsg, setErrMsg} = useContext(AlertContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleClick = () => {
@@ -174,7 +175,7 @@ function EditProfile({ title }) {
       <div className="max-w-2xl bg-white py-10 px-5 m-auto w-full mt-10">
         <div className="text-3xl mb-6 text-center ">{title}</div>
 
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
             {errMsg + "!"}
           </Alert>

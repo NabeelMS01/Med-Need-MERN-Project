@@ -18,6 +18,7 @@ import React, { useEffect, useState } from "react";
 import DragHandleRoundedIcon from "@mui/icons-material/DragHandleRounded";
 import { Dashboard, Person, Search } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import GoogleMaps from "../SelectLocation/SelectPlaces";
 
 function DrawerComp() {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ function DrawerComp() {
     {
       label: "Browse Professionals",
       icon: <PeopleOutlinedIcon />,
-      nav: "/browse",
+      nav: "/browse-professionals",
       status: true,
     },
 
@@ -97,20 +98,13 @@ function DrawerComp() {
         }}
         onOpen={() => setopenDrawer(true)}
       >
-        <ListItem>
-          <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder="Search.."
-            inputProps={{ "aria-label": "search......." }}
-          ></InputBase>
-          <IconButton type="button" sx={{ p: "10px" }} aria-label="search.....">
-            <Search />
-          </IconButton>
-        </ListItem>
+       
 
 
 
         <List style={{ color: "grey" }}>
+      {/* <GoogleMaps/> */}
+
         <ListItemButton
               onClick={() => {
           userData? navigate('profile'):navigate('/login')

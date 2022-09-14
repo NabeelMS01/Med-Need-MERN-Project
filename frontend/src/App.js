@@ -31,11 +31,11 @@ function App() {
    const [view,setview]=useState(false)
    const [openModal, setOpenModal] = useState(false);
    const [editModal, setEditModal ] = useState(false);
-   
+   const [errMsg, setErrMsg] = useState("");
   return (
 
 <DrawerContext.Provider value={{open,setOpen}}>
- <AlertContext.Provider value={{ editModal, setEditModal , openModal, setOpenModal,openAlert, setOpenAlert,addCatState,setaddCatState,formAlert,setformAlert,view,setview }} >
+ <AlertContext.Provider value={{errMsg, setErrMsg, editModal, setEditModal , openModal, setOpenModal,openAlert, setOpenAlert,addCatState,setaddCatState,formAlert,setformAlert,view,setview }} >
 <ThemeProvider theme={theme} >
 
   <BrowserRouter> 

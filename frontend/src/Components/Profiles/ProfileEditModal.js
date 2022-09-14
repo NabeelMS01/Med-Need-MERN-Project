@@ -44,8 +44,7 @@ const style = {
   p: 4,
 };
 
-export default function EditModal( props) {
-
+export default function EditModal(props) {
   const [fileData, setFileData] = useState();
   const [img, setImg] = useState();
   const [data, setData] = useState({});
@@ -68,18 +67,17 @@ export default function EditModal( props) {
   const [state, setState] = useState("");
   const [user, setUser] = useState({});
   const [open, setOpen] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState();
-   const [file, setFile] = useState();
+  const [file, setFile] = useState();
   const [userData, setUserData] = useState({});
   const [userProfile, setUserProfile] = useState({});
   const { editModal, setEditModal } = useContext(AlertContext);
+  const { errMsg, setErrMsg } = useContext(AlertContext);
   const handleOpen = () => setEditModal(true);
   const handleClose = () => setEditModal(false);
 
-  
- 
   const navigate = useNavigate();
 
   const handleFile = (e) => {
@@ -94,41 +92,51 @@ export default function EditModal( props) {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(userProfile);
+
     try {
-
-console.log(userProfile.profile_img.public_id);
-
-      if (img) {
-         const formData = new FormData();
-        formData.append("profile_img", img);
-       
      
-      
-        formData.append("address", address);
-         formData.append("profile_img", fileData);
-        formData.append("country", country);
-        formData.append("state", state);
-        formData.append("mobile", parseInt(mobile));
-        formData.append("profession", profession);
-        formData.append("about", about);
-        formData.append("languages",  languages); 
-         formData.append("pincode", parseInt(pincode));
-        formData.append("token", user.accessToken);
-        formData.append("public_id", userProfile.profile_img.public_id);
-        const config = {
-          headers: {
-            "Content-type": "application/json",
-            "token" : user.accessToken,
-          },
-        };
 
- 
-         await axios.post("/update-profile-data",formData,config).then((response) => {
+      const formData = new FormData();
 
-          
-          });
-      }
+      formData.append("address", address);
+      formData.append("profile_img", fileData);
+      formData.append("country", country);
+      formData.append("state", state);
+      formData.append("mobile", parseInt(mobile));
+      formData.append("profession", profession);
+      formData.append("about", about);
+      formData.append("languages", languages);
+      formData.append("pincode", parseInt(pincode));
+      // formData.append("token", JSON.parse(localStorage.getItem("userInfo")).token);
+      formData.append("public_id", userProfile.profile_img.public_id);
+      console.log("hello");
+      const form = {
+        address: address,
+        profile_img: fileData,
+        country: country,
+        mobile: mobile,
+        profession: profession,
+        about: about,
+        languages: languages,
+        pincode: parseInt(pincode),
+        public_id: userProfile.profile_img.public_id,
+      };
+
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          token: user.accessToken,
+        },
+      };
+      //  if( address&&pincode&&languages&&pincode&&about&&mobile&&state&&address
+
+      //  )
+      console.log("hello");
+      await axios
+        .post("/update-profile-data", form, config)
+        .then((response) => {
+         
+        });
     } catch (error) {}
   };
 
@@ -142,17 +150,15 @@ console.log(userProfile.profile_img.public_id);
   async function getProfileData() {
     try {
       const token = JSON.parse(localStorage.getItem("userInfo"));
+      if (languages) {
+        await axios
+          .get(`/profile/${token.accessToken}`)
+          .then(async ({ data }) => {
+            setUserData(data);
 
-      await axios
-        .get(`/profile/${token.accessToken}`)
-        .then(async ({ data }) => {
-         
-
-          setUserData(data);
-          
-          setUserProfile(data.profile);
-         
-        });
+            setUserProfile(data.profile);
+          });
+      } else setErrMsg("please enter your language");
     } catch (error) {}
   }
 
@@ -163,19 +169,24 @@ console.log(userProfile.profile_img.public_id);
   }, []);
 
   async function getProfessionList() {
-setAddress(userProfile.address)
-setPincode(userProfile.pincode)
-setState(userProfile.state)
-setCountry(userProfile.country)
-setMobile(userProfile.mobile)
- setAbout(userProfile.about)
- 
+    try {
+      setAddress(userProfile.address);
+      setPincode(userProfile.pincode);
+      setState(userProfile.state);
+      setCountry(userProfile.country);
+      setMobile(userProfile.mobile);
+      setAbout(userProfile.about);
+      setProfession(userProfile.profession);
+      setUser(JSON.parse(localStorage.getItem("userInfo")).token);
 
-    await axios.get("/getAllProfessions").then(({ data }) => {
-      setprofessionList(data);
-    });
+      await axios.get("/getAllProfessions").then(({ data }) => {
+        setprofessionList(data);
+      });
+    } catch (error) {
+      setErrMsg(error.response.message);
+    }
   }
-   
+
   return (
     <div>
       <Modal
@@ -188,39 +199,13 @@ setMobile(userProfile.mobile)
         <Box sx={style}>
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-2 gap-4 max-w-xl m-auto">
-              <div className="col-span-2">
-                <div className="m-auto w-28">
-                  <Button
-                    style={{ margin: "auto" }}
-                    variant="text"
-                    component="label"
-                  >
-                    {img ? (
-                      <Avatar sx={{ width: "100px", height: "100px" }}>
-                        <img src={img} alt="" />
-                      </Avatar>
-                    ) : (
-                      <Avatar sx={{ width: "100px", height: "100px" }} />
-                    )}
-                    <input
-                      onChange={(e) => handleProfilePic(e)}
-                      type="file"
-                      name="file"
-                      hidden
-                    />
-                  </Button>
-                </div>
-                <Typography style={{ textAlign: "center" }}>
-                  Upload Profile picture
-                </Typography>
-              </div>
               <div className="col-span-2 lg:col-span-1">
                 <TextField
                   // value={props.name}
                   style={{ width: "100%" }}
                   variant="outlined"
                   label="Name"
-                 value={userProfile.name}
+                  value={userProfile.name}
                   disabled
                 />
               </div>
@@ -280,6 +265,31 @@ setMobile(userProfile.mobile)
                 />
               </div>
               <div className="col-span-2 lg:col-span-1">
+                {/* =================select professions======================= */}
+                <FormControl style={{ width: "100%" }}>
+                  <InputLabel id="demo-simple-select-helper-label">
+                    Profession
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-helper-label"
+                    id="demo-simple-select-helper"
+                    value={profession}
+                    label="Age"
+                    onChange={handleProfession}
+                    defaultValue={userProfile.profession}
+                  >
+                    <MenuItem value="">
+                      <em>None</em>
+                    </MenuItem>
+                    {professionList.map((data, index) => (
+                      <MenuItem key={index} value={data.profession_name}>
+                        {data.profession_name}{" "}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              <div className="col-span-2 lg:col-span-1">
                 <TextField
                   type={"text"}
                   style={{ width: "100%" }}
@@ -302,30 +312,6 @@ setMobile(userProfile.mobile)
                 />
               </div>
 
-              <div className="col-span-2 lg:col-span-1">
-                {/* =================select professions======================= */}
-                <FormControl style={{ width: "100%" }}>
-                  <InputLabel id="demo-simple-select-helper-label">
-                    Profession
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-helper-label"
-                    id="demo-simple-select-helper"
-                    value={profession}
-                    label="Age"
-                    onChange={handleProfession}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {professionList.map((data, index) => (
-                      <MenuItem key={index} value={data.profession_name}>
-                        {data.profession_name}{" "}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </div>
               {languages.length != 0 ? (
                 <div className="col-span-2 lg:col-span-1">
                   <Stack direction="row" spacing={1} width={"100%"}>
@@ -345,6 +331,8 @@ setMobile(userProfile.mobile)
                   multiline
                   minRows={"4"}
                   onChange={(e) => setAbout(e.target.value)}
+                  defaultValue={userProfile.about}
+                  required
                 />
               </div>
 
@@ -374,6 +362,15 @@ setMobile(userProfile.mobile)
                 </Button>
               </div>
             </div>
+            <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+              <Alert
+                onClose={handleClose}
+                severity="error"
+                sx={{ width: "100%" }}
+              >
+                {errMsg + "!"}
+              </Alert>
+            </Snackbar>
           </form>
         </Box>
       </Modal>
