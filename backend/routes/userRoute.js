@@ -16,6 +16,8 @@ const {
   BlockUnblock,
   getAllProfessions,
   UpdateProfile,
+  AllProfessionals,
+  UpdateProfessionalLocation
 } = require("../controllers/UserControllers");
 const {
   userProfiles,
@@ -24,7 +26,6 @@ const {
   addProfession,
   getCategory,
   acceptProfile,
- 
 } = require("../controllers/AdminControllers");
 //=================user router==============================
 router.get("/get-all-users", getallusers);
@@ -35,6 +36,8 @@ router.post("/unblock-user", BlockUnblock);
 router.get("/getAllProfessions", getAllProfessions);
 router.post("/formStatus", checkFormstatus);
 router.get("/profile/:id", ProfileData);
+router.get("/list-professionals", AllProfessionals);
+router.get("/update-professionals-location/:id/:location", UpdateProfessionalLocation);
 router.post(
   "/update-resume",
   upload.fields([
@@ -69,14 +72,13 @@ router.post(
   ]),
   submitApplication
 );
-  router.post(
+router.post(
   "/update-profile-data",
   upload.fields([
     {
       name: "profile_img",
       maxCount: 1,
     },
-   
   ]),
   UpdateProfile
 );

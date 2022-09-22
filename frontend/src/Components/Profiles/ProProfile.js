@@ -7,6 +7,8 @@ import moment from "moment";
 import { AlertContext } from "../../contexts/contexts";
 import ResumeModal from "./ResumeModal";
 import EditModal from "./ProfileEditModal";
+import { Edit } from "@mui/icons-material";
+import EditLocation from "./EditLocationModal";
 
 function ProfessionalProfile() {
   const { openModal, setOpenModal } = useContext(AlertContext);
@@ -16,12 +18,11 @@ function ProfessionalProfile() {
   const [userData, setUserData] = useState({});
   const [userProfile, setUserProfile] = useState({});
   const [resumeData, setResumeData] = useState({});
-
-
+  const {locationEditModal,setLocationEditModal} =  useContext(AlertContext);
   let ProfileData;
- useEffect(() => {
-  getProfileData();
-   }, []);
+  useEffect(() => {
+    getProfileData();
+  }, []);
 
   async function getProfileData() {
     try {
@@ -50,6 +51,10 @@ function ProfessionalProfile() {
   const handleEditProfile = () => {
     setEditModal(true);
   };
+
+  function handleEditLocation(){
+    setLocationEditModal(true)
+  }
 
   return (
     <div>
@@ -101,10 +106,11 @@ function ProfessionalProfile() {
                     }  `}
                   />
                 </div>
-                <h1 className="text-gray-900 font-bold text-xl leading-8 my-1">
+                <h1 className="text-gray-900 font-bold text-xl text-center leading-8 my-1">
                   {userData.name}
                 </h1>
               </div>
+
               {/* <!-- End of profile card --> */}
               <div className="my-4"></div>
               {/* <!-- Friends card --> */}
@@ -209,7 +215,11 @@ function ProfessionalProfile() {
                           : "Not updated"}
                       </div>
                     </div>
-
+                    <div className="grid grid-cols-2 ">
+                      <div className="px-4 py-2 font-semibold">Location</div>
+                      <div className="px-4 py-2 ">{userProfile.location}     <span className="ml-3 "onClick={()=>handleEditLocation()} ><Edit sx={{width:"18px",cursor:"pointer"}} /></span> </div>
+                    </div>
+                    <div className="grid grid-cols-2"></div>
                     {resume.url ? (
                       <a href={` ${resume.url}`} target={"_blank"}>
                         {" "}
@@ -278,7 +288,7 @@ function ProfessionalProfile() {
 
                 {/* <!-- End of Experience and education grid --> */}
               </div>
-
+<EditLocation id={userProfile._id} />
               {/* <!-- End of profile tab --> */}
             </div>
           </div>

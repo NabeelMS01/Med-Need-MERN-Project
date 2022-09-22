@@ -34,7 +34,7 @@ import { Add } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
-
+   top:"5%",
   right: "5%",
   left: "5%",
 
@@ -192,7 +192,7 @@ export default function EditModal(props) {
       <Modal
         open={editModal}
         onClose={handleClose}
-        sx={{ overflow: "scroll", height: "90vh", top: "5%" }}
+        sx={{ overflow: "scroll", }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -205,7 +205,7 @@ export default function EditModal(props) {
                   style={{ width: "100%" }}
                   variant="outlined"
                   label="Name"
-                  value={userProfile.name}
+                  value={userProfile&&userProfile.name    }
                   disabled
                 />
               </div>
@@ -217,7 +217,7 @@ export default function EditModal(props) {
                   label="Address"
                   required
                   onChange={(e) => setAddress(e.target.value)}
-                  defaultValue={userProfile.address}
+                  defaultValue={userProfile&&userProfile.address}
                 />
               </div>
               <div className="col-span-2 lg:col-span-1">
@@ -227,7 +227,7 @@ export default function EditModal(props) {
                   variant="outlined"
                   label="Pincode"
                   required
-                  defaultValue={userProfile.pincode}
+                  defaultValue={userProfile&&userProfile.pincode}
                   onChange={(e) => setPincode(e.target.value)}
                 />
               </div>
@@ -238,7 +238,7 @@ export default function EditModal(props) {
                   variant="outlined"
                   label="State"
                   required
-                  defaultValue={userProfile.state}
+                  defaultValue={userProfile&&userProfile.state}
                   onChange={(e) => setState(e.target.value)}
                 />
               </div>
@@ -249,7 +249,7 @@ export default function EditModal(props) {
                   variant="outlined"
                   label="Country"
                   required
-                  defaultValue={userProfile.country}
+                  defaultValue={userProfile&&userProfile.country}
                   onChange={(e) => setCountry(e.target.value)}
                 />
               </div>
@@ -260,7 +260,7 @@ export default function EditModal(props) {
                   variant="outlined"
                   label="Mobile Number"
                   onChange={(e) => setMobile(e.target.value)}
-                  defaultValue={userProfile.mobile}
+                  defaultValue={userProfile&&userProfile.mobile}
                   required
                 />
               </div>
@@ -276,7 +276,7 @@ export default function EditModal(props) {
                     value={profession}
                     label="Age"
                     onChange={handleProfession}
-                    defaultValue={userProfile.profession}
+                    defaultValue={userProfile&&userProfile.profession}
                   >
                     <MenuItem value="">
                       <em>None</em>
@@ -331,7 +331,7 @@ export default function EditModal(props) {
                   multiline
                   minRows={"4"}
                   onChange={(e) => setAbout(e.target.value)}
-                  defaultValue={userProfile.about}
+                  defaultValue={userProfile&&userProfile.about}
                   required
                 />
               </div>

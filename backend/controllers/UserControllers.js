@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
-
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const Professions = require("../models/professionModel");
@@ -79,8 +78,9 @@ const authUser = asyncHandler(async (req, res) => {
     const userExist = await User.findOne({ email });
 
     if (userExist == null) {
-      res.status(400);
-      throw new Error("wrong email");
+      
+      res.status(400).json("wrong email")
+      
     }
 
     if (userExist && (await userExist.matchPassword(password))) {
@@ -100,18 +100,17 @@ const authUser = asyncHandler(async (req, res) => {
           accessToken,
         });
       } else {
-        res.status(400);
-        throw new Error("account blocked");
+        res.status(400).json("account blocked");
       }
     } else {
-      res.status(400);
-      throw new Error("wrong password");
+      res.status(400).json("wrong password");
     }
   } catch (error) {
     if (res.statusCode == 400) {
-      res.status(400).send(error.message);
+      console.log(error.message);
+      res.status(400).json(error);
     } else if (res.statusCode == 404 || res.statusCode == 500) {
-      res.status(404).send(" server error");
+      res.status(404).json(" server error");
     }
   }
 });
@@ -326,40 +325,139 @@ const updateResume = asyncHandler(async (req, res) => {
           },
         }
       ).then((response) => {
-        console.log(response); 
+        console.log(response);
 
-   if(response){
-    res.status(200).json(response)
-   }
-
-
+        if (response) {
+          res.status(200).json(response);
+        }
       });
     }
   } catch (error) {
-    res.status(400).json(error)
+    res.status(400).json(error);
+  }
+});
+// ===================update profile=============================
+const UpdateProfile = asyncHandler(async (req, res) => {
+  console.log("req.body");
+
+  try {
+    console.log(req.body);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+const AllProfessionals = asyncHandler(async (req, res) => {
+  try {
+    await User.aggregate([
+      {
+        $match:{
+          is_professional:true,
+          status:true,
+          approval_status:true
+        }
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "_id",
+          foreignField: "user_id",
+          as: "profile"
+        }
+      },
+      {
+        $unwind:{
+          path: "$profile",
+           
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
+        $project: {
+          name:1,
+          profile_image:"$profile.profile_img",
+          about:"$profile.about",
+           rating:"$profile.reviews", 
+        }
+      },
+      {
+        $unwind: {
+          path: "$rating",
+         
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: { _id: "$_id", rating : {  $avg : "$rating.rating" } }
+      },
+      {
+        $lookup:{
+          from: "profiles",
+          localField: "_id",
+          foreignField: "user_id",
+          as: "profile"
+        }
+      },
+      {
+        $unwind: {
+          path: "$profile",
+           
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
+        $project: {
+          rating:1,name:"$profile.name",
+          profile_id:"$profile._id",
+          profile_img:"$profile.profile_img",
+            gender:"$profile.gender",
+              location:"$profile.location",
+               geo_location:"$profile.geo_location",
+                 city:"$profile.city",
+                about:"$profile.about",     
+               hiring_status:"$profile.hiring_status",     
+              status:"$profile.status",     
+              
+        }
+      },
+    ]).then((response) => {
+      if (response) {
+        console.log(response);
+        res.status(200).json(response);
+      }
+    });
+
+    console.log(data);
+  } catch (error) {
+    if (error) {
+      res.status(400).json(error);
+    }
   }
 });
 
 
-const UpdateProfile =asyncHandler(async(req,res)=>{
+const UpdateProfessionalLocation =asyncHandler(async(req,res)=>{
+  console.log(req.params.id);
+  console.log(req.params.location);
+  const{id,location}=req.params
 
-  console.log("req.body");
-  
-
-try {
- console.log(req.body);
-
- 
-
-
-
-} catch (error) {
-  console.log(error);
-}
+  try {
+    Profile.updateOne({_id:ObjectId(id)},{
+      $set:{
+        location :location
+      }
+    }).then((response)=>{
+      res.status(200).json(response)
+    })
 
 
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error)
+  }
 
 })
+
 
 module.exports = {
   createAccount,
@@ -372,5 +470,7 @@ module.exports = {
   checkFormstatus,
   ProfileData,
   updateResume,
-  UpdateProfile
+  UpdateProfile,
+  AllProfessionals,
+  UpdateProfessionalLocation
 };

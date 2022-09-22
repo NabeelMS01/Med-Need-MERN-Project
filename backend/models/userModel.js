@@ -31,8 +31,8 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       
     },
-    location: {
-      type: String,
+    current_location: {
+      type: Object,
       default:null
      
     },

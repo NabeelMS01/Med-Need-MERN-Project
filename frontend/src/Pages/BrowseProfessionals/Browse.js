@@ -1,16 +1,49 @@
 import { Container, useMediaQuery, useTheme } from "@material-ui/core";
 import { Box, Grid, MenuItem } from "@mui/material";
-import React from "react";
+import axios from "axios";
+import React, { useContext, useEffect } from "react";
 import BrowsePage from "../../Components/BrowsePage/BrowseNav";
 import MdFilterComponent from "../../Components/FilterComponent/MdFilterComponent";
 import MobileFilterComponent from "../../Components/FilterComponent/MobileFilterComponent";
 import ProfessionalCard from "../../Components/ProfessionalCard/ProfessionalCard";
 import MdSort from "../../Components/SortComponent/MdSort";
+import { ComponentContext } from "../../contexts/contexts";
 
 import "./Browse.css";
 function Browse() {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("sm"));
+ const {loading, setLoading}=useContext(ComponentContext)
+ const {ProData, setProData} = useContext(ComponentContext);
+ 
+const getProfessionalData = async()=>{
+
+  try {
+    setLoading(true)
+    await axios.get("/list-professionals").then((response)=>{
+     
+      setProData(response.data)
+    })
+
+
+     setLoading(false)
+  } catch (error) {
+    setLoading(false)
+  }
+
+}
+
+
+
+
+  useEffect(() => {
+     getProfessionalData()
+    return () => {
+       
+    };
+  }, [ ]);
+
+
   return (
     <div>
       <BrowsePage />
@@ -35,8 +68,14 @@ function Browse() {
              
             </Grid>
             <Container>
+           {   ProData.map((data,index)=>(
+   <>
+    <ProfessionalCard key={index} data={data } index={index}   />
+ </>  
+           ))
+             
               
-              <ProfessionalCard data={{name:"sara mathew"}}   />
+              }
              
             </Container>
           </Grid>

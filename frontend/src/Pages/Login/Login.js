@@ -13,7 +13,8 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../Action/userActions";
 function Login() {
   const [userCheck, setuserCheck] = useState("professional");
 
@@ -32,6 +33,10 @@ function Login() {
   const [errorPhone, seterrorPhone] = useState("");
   const [errorPassword, seterrorPassword] = useState("");
   // ================================================================
+
+  const dispatch = useDispatch();
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading, error, userInfo, currentUserData } = userLogin;
 
   const handleEmail = () => {
     seterrormessage(false);
@@ -65,73 +70,64 @@ function Login() {
     } else if (!handleEmail() || !handlePassword()) {
     } else {
       try {
-        setprogressBar(true);
+        //  setprogressBar(loading);
+        dispatch(login(email, password));
+        console.log(email);
 
-        const config = {
-          header: {
-            "content-type": "application/json",
-            
-          },
-        };
-        await axios
-          .post(
-            "/login",
-            {
-              email,
-              password,
-            },
-            config
-          )
-          .then(async({data}) => {
-            
-console.log(data);
-const userData=JSON.stringify(data)
-   
- localStorage.setItem("userInfo",userData);
-  navigate('/dashboard')
- 
+        //         const config = {
+        //           header: {
+        //             "content-type": "application/json",
 
+        //           },
+        //         };
+        //         await axios
+        //           .post(
+        //             "/login",
+        //             {
+        //               email,
+        //               password,
+        //             },
+        //             config
+        //           )
+        //           .then(async({data}) => {
 
+        // console.log(data);
+        // const userData=JSON.stringify(data)
 
+        //  localStorage.setItem("userInfo",userData);
+        //   navigate('/dashboard')
 
-
-
-
-          })
-          .catch((err) => {
-            setprogressBar(false);
-            if (err.response.data == "wrong password") {
-              setprogressBar(false);
-              seterrormessage("wrong password");
-            } else if (err.response.data == "wrong email") {
-              setprogressBar(false);
-              seterrormessage("No account exist");
-            } else if (err.response.data == "account blocked") {
-              setprogressBar(false);
-              seterrormessage("your account is blocked");
-            }
-          });
+        //           })
+        //           .catch((err) => {
+        //             setprogressBar(false);
+        //             if (err.response.data == "wrong password") {
+        //               setprogressBar(false);
+        //               seterrormessage("wrong password");
+        //             } else if (err.response.data == "wrong email") {
+        //               setprogressBar(false);
+        //               seterrormessage("No account exist");
+        //             } else if (err.response.data == "account blocked") {
+        //               setprogressBar(false);
+        //               seterrormessage("your account is blocked");
+        //             }
+        //           });
       } catch (err) {
- 
-        seterrormessage("error occured");
-
+        console.log(err);
       }
     }
   };
   useEffect(() => {
-    const userInfo =localStorage.getItem("userInfo");
-    if(userInfo){
-      navigate('/')
+ const userInfo =localStorage.getItem("userInfo");
+    if (userInfo) {
+      navigate("/");
     }
-    return () => {
-      
-    };
-  }, [ ]);
 
+    return () => {};
+  }, [userInfo]);
 
   return (
     <div>
-      {progressBar ? (
+      {loading ? (
         <Box
           sx={{
             display: "flex",
@@ -187,9 +183,9 @@ const userData=JSON.stringify(data)
           marginTop={" "}
           padding={"5px "}
         >
-          {errormessage ? (
+          {error ? (
             <Alert sx={{ width: "83%" }} variant="outlined" severity="error">
-              {errormessage}
+              {error.response.data}
             </Alert>
           ) : null}
 

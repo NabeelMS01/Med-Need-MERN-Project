@@ -8,7 +8,7 @@ const app= express();
 const connectDb =require('./config/db')
 let userRouter=require('./routes/userRoute')
 const { notFound, errorHandler } = require('./middlewares/errorMiddlewere')
- 
+require("dotenv").config();
 
 
 dotenv.config();

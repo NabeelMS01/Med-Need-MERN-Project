@@ -32,6 +32,8 @@ import {
   useTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {logout} from '../../Action/userActions' 
 
 const useStyle = makeStyles((theme) => ({
   navBar: {
@@ -48,6 +50,8 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
+
+
 function NavBar() {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -56,6 +60,11 @@ function NavBar() {
   const [userData, setuserData] = useState({});
     const [userPro, setuserPro] = useState('');
   const classes = useStyle();
+const dispatch =useDispatch()
+const userLogin =useSelector((state)=>state.userLogin);
+const {userInfo }=userLogin
+
+
   useEffect(() => {
     const userInfo = localStorage.getItem("userInfo");
 
@@ -74,7 +83,7 @@ function NavBar() {
  
  
   
-  const logout = () => {
+  const handleLogout= () => {
     swal({
       title: "Are you sure?",
       text: "you want to logout ?",
@@ -85,8 +94,8 @@ function NavBar() {
     .then(async(willDelete) => {
       if (willDelete) {
        
-        
-       localStorage.removeItem("userInfo");
+        dispatch(logout())
+      //  localStorage.removeItem("userInfo");
     setuserData(false);
     // setuserloged(false); 
 
@@ -233,7 +242,7 @@ function NavBar() {
                     </ListItemIcon>
                     Settings
                   </MenuItem>
-                  <MenuItem onClick={logout}>
+                  <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                       <Logout fontSize="small" />
                     </ListItemIcon>

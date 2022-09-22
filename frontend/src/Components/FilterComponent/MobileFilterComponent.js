@@ -35,9 +35,8 @@ function MobileFilterComponent() {
 
     const handleScroll =()=>{
       const initialTop =controls.current.getBoundingClientRect().top  ;
-console.log({initialTop});
-
-        console.log(window.scrollY);
+ 
+ 
         setStickey(window.scrollY > 135? true:false  );
      }  
 
