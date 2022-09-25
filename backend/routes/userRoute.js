@@ -17,7 +17,8 @@ const {
   getAllProfessions,
   UpdateProfile,
   AllProfessionals,
-  UpdateProfessionalLocation
+  UpdateProfessionalLocation,
+  viewProfessional
 } = require("../controllers/UserControllers");
 const {
   userProfiles,
@@ -37,6 +38,11 @@ router.get("/getAllProfessions", getAllProfessions);
 router.post("/formStatus", checkFormstatus);
 router.get("/profile/:id", ProfileData);
 router.get("/list-professionals", AllProfessionals);
+router.get("/view-professional/:id",viewProfessional);
+
+
+
+
 router.get("/update-professionals-location/:id/:location", UpdateProfessionalLocation);
 router.post(
   "/update-resume",

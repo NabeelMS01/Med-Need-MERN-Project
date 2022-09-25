@@ -6,11 +6,14 @@ import {
   LocationOnOutlined,
 } from "@mui/icons-material";
 import { Avatar, Box, Card, Grid, Rating, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { ComponentContext } from "../../contexts/contexts";
 
-function ProfessionalCard({ data }) {
+function ProfessionalCard({ data,handleViewDetails }) {
+
+  const {professionalData, setprofessionalData}=useContext(ComponentContext)
   const [showMore, setShowMore] = useState(false);
-  console.log(data);
+ 
 
   return (
     <>
@@ -118,6 +121,7 @@ function ProfessionalCard({ data }) {
                 <Button
                   style={{ backgroundColor: "#257069", color: "white" }}
                   variant="outlined"
+                  onClick={()=>handleViewDetails(data._id)}
                 >
                   View Details
                 </Button>

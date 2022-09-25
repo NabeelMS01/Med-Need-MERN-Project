@@ -78,9 +78,7 @@ const authUser = asyncHandler(async (req, res) => {
     const userExist = await User.findOne({ email });
 
     if (userExist == null) {
-      
-      res.status(400).json("wrong email")
-      
+      res.status(400).json("wrong email");
     }
 
     if (userExist && (await userExist.matchPassword(password))) {
@@ -351,74 +349,74 @@ const AllProfessionals = asyncHandler(async (req, res) => {
   try {
     await User.aggregate([
       {
-        $match:{
-          is_professional:true,
-          status:true,
-          approval_status:true
-        }
+        $match: {
+          is_professional: true,
+          status: true,
+          approval_status: true,
+        },
       },
       {
         $lookup: {
           from: "profiles",
           localField: "_id",
           foreignField: "user_id",
-          as: "profile"
-        }
+          as: "profile",
+        },
       },
       {
-        $unwind:{
+        $unwind: {
           path: "$profile",
-           
-          preserveNullAndEmptyArrays: true 
-        }
+
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $project: {
-          name:1,
-          profile_image:"$profile.profile_img",
-          about:"$profile.about",
-           rating:"$profile.reviews", 
-        }
+          name: 1,
+          profile_image: "$profile.profile_img",
+          about: "$profile.about",
+          rating: "$profile.reviews",
+        },
       },
       {
         $unwind: {
           path: "$rating",
-         
-          preserveNullAndEmptyArrays: true
-        }
+
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
-        $group: { _id: "$_id", rating : {  $avg : "$rating.rating" } }
+        $group: { _id: "$_id", rating: { $avg: "$rating.rating" } },
       },
       {
-        $lookup:{
+        $lookup: {
           from: "profiles",
           localField: "_id",
           foreignField: "user_id",
-          as: "profile"
-        }
+          as: "profile",
+        },
       },
       {
         $unwind: {
           path: "$profile",
-           
-          preserveNullAndEmptyArrays: true 
-        }
+
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $project: {
-          rating:1,name:"$profile.name",
-          profile_id:"$profile._id",
-          profile_img:"$profile.profile_img",
-            gender:"$profile.gender",
-              location:"$profile.location",
-               geo_location:"$profile.geo_location",
-                 city:"$profile.city",
-                about:"$profile.about",     
-               hiring_status:"$profile.hiring_status",     
-              status:"$profile.status",     
-              
-        }
+          rating: 1,
+          name: "$profile.name",
+          profile_id: "$profile._id",
+          profile_img: "$profile.profile_img",
+          gender: "$profile.gender",
+          location: "$profile.location",
+          geo_location: "$profile.geo_location",
+          city: "$profile.city",
+          about: "$profile.about",
+          hiring_status: "$profile.hiring_status",
+          status: "$profile.status",
+        },
       },
     ]).then((response) => {
       if (response) {
@@ -435,30 +433,84 @@ const AllProfessionals = asyncHandler(async (req, res) => {
   }
 });
 
-
-const UpdateProfessionalLocation =asyncHandler(async(req,res)=>{
+const UpdateProfessionalLocation = asyncHandler(async (req, res) => {
   console.log(req.params.id);
   console.log(req.params.location);
-  const{id,location}=req.params
+  const { id, location } = req.params;
 
   try {
-    Profile.updateOne({_id:ObjectId(id)},{
-      $set:{
-        location :location
+    Profile.updateOne(
+      { _id: ObjectId(id) },
+      {
+        $set: {
+          location: location,
+        },
       }
-    }).then((response)=>{
-      res.status(200).json(response)
-    })
-
-
+    ).then((response) => {
+      res.status(200).json(response);
+    });
   } catch (error) {
     console.log(error);
-    res.status(400).json(error)
+    res.status(400).json(error);
   }
+});
 
-})
+const viewProfessional = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
 
-
+    await Profile.aggregate([
+      {
+        $match: {
+          user_id: ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: {
+          path: "$user",
+          includeArrayIndex: "string",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          user_id: 1,
+          profile_img: 1,
+          name: 1,
+          email: 1,
+          date_of_birth: 1,
+          gender: 1,
+          location: 1,
+          about: 1,
+          mobile: 1,
+          status: 1,
+          resume: 1,
+          approval_status: 1,
+          languages: 1,
+          hiring_status: 1,
+          location: 1,
+          createdAt: "$user.createdAt",
+          current_location: "$user.current_location",
+          is_professional: "$user.is_professional",
+          profession:1,
+           about:1,
+        },
+      },
+    ]).then((response) => {
+      res.status(200).json(response[0]);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 module.exports = {
   createAccount,
   authUser,
@@ -472,5 +524,6 @@ module.exports = {
   updateResume,
   UpdateProfile,
   AllProfessionals,
-  UpdateProfessionalLocation
+  UpdateProfessionalLocation,
+  viewProfessional,
 };

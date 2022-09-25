@@ -1,7 +1,10 @@
 import { Container, useMediaQuery, useTheme } from "@material-ui/core";
 import { Box, Grid, MenuItem } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect} from "react";
+import  {useNavigate} from "react-router-dom";
+
+
 import BrowsePage from "../../Components/BrowsePage/BrowseNav";
 import MdFilterComponent from "../../Components/FilterComponent/MdFilterComponent";
 import MobileFilterComponent from "../../Components/FilterComponent/MobileFilterComponent";
@@ -15,7 +18,16 @@ function Browse() {
   const isMatch = useMediaQuery(theme.breakpoints.down("sm"));
  const {loading, setLoading}=useContext(ComponentContext)
  const {ProData, setProData} = useContext(ComponentContext);
- 
+ const {professionalData, setprofessionalData}=useContext(ComponentContext)
+ const navigate =useNavigate()
+const handleViewDetails=(id)=>{
+  console.log(id);
+  setprofessionalData({id:id})
+  navigate(`/view-professional/${id}`)
+
+}
+
+
 const getProfessionalData = async()=>{
 
   try {
@@ -29,13 +41,9 @@ const getProfessionalData = async()=>{
      setLoading(false)
   } catch (error) {
     setLoading(false)
-  }
-
+  } 
 }
-
-
-
-
+ 
   useEffect(() => {
      getProfessionalData()
     return () => {
@@ -70,7 +78,7 @@ const getProfessionalData = async()=>{
             <Container>
            {   ProData.map((data,index)=>(
    <>
-    <ProfessionalCard key={index} data={data } index={index}   />
+    <ProfessionalCard key={index} data={data } index={index} handleViewDetails={handleViewDetails}  />
  </>  
            ))
              
