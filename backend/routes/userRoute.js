@@ -38,7 +38,7 @@ router.get("/getAllProfessions", getAllProfessions);
 router.post("/formStatus", checkFormstatus);
 router.get("/profile/:id", ProfileData);
 router.get("/list-professionals", AllProfessionals);
-router.get("/view-professional/:id",viewProfessional);
+router.get("/professional/:id",viewProfessional);
 
 
 

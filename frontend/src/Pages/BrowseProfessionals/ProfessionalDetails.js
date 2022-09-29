@@ -1,7 +1,7 @@
 import { Done, DoneOutline, LocationOnOutlined } from "@mui/icons-material";
 import { Avatar, Button, Grid, Rating, Typography } from "@mui/material";
 import { Box, Container, height } from "@mui/system";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import NavBar from "../../Components/NavBar/NavBar";
 import About from "../../Components/ProfessionalDetailPage/About";
 import Language from "../../Components/ProfessionalDetailPage/Language";
@@ -12,6 +12,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import HireModal from "../../Components/ProfessionalDetailPage/HireModal";
+
+
+  
+
 function ProfessionalDetails() {
   let { id } = useParams();
   const navigate = useNavigate();
@@ -27,7 +31,7 @@ function ProfessionalDetails() {
 
   const getDetails = async () => {
     try {
-      await axios.get(`/view-professional/${id}`).then(({ data }) => {
+      await axios.get(`/professional/${id}`).then(({ data }) => {
         setLanguages(data.languages[0].split(","));
         setData(data);
       });
@@ -40,10 +44,17 @@ function ProfessionalDetails() {
 
 
 const handleOpen=()=>{
+
+const user=JSON.parse(localStorage.getItem("userInfo"))
+  
+ if(!user){
+  navigate('/login')
+ }else{
   setOpenModal(true)
+ } 
+  
 }
-
-
+ 
   return (
     <>
 
